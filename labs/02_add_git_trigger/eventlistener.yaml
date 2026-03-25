@@ -1,11 +1,10 @@
 apiVersion: triggers.tekton.dev/v1beta1
-kind: EventListener
+kind: TriggerBinding
 metadata:
-  name: cd-listener
+  name: cd-binding
 spec:
-  serviceAccountName: pipeline
-  triggers:
-    - bindings:
-      - ref: cd-binding
-      template:
-        ref: cd-template
+  params:
+    - name: repository
+      value: $(body.repository.url)
+    - name: branch
+      value: $(body.ref)
