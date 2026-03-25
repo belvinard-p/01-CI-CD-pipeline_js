@@ -1,10 +1,26 @@
 apiVersion: triggers.tekton.dev/v1beta1
-kind: TriggerBinding
+kind: TriggerTemplate
 metadata:
-  name: cd-binding
+  name: cd-template
 spec:
   params:
     - name: repository
-      value: $(body.repository.url)
+      description: The git repo
+      default: " "
     - name: branch
-      value: $(body.ref)
+      description: the branch for the git repo
+      default: master
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: cd-pipeline-run-
+      spec:
+        serviceAccountName: pipeline
+        pipelineRef:
+          name: cd-pipeline
+        params:
+          - name: repo-url
+            value: $(tt.params.repository)
+          - name: branch
+            value: $(tt.params.branch)
