@@ -1,14 +1,18 @@
+---
 apiVersion: tekton.dev/v1beta1
-kind: Pipeline
+kind: Task
 metadata:
-  name: hello-pipeline
+  name: checkout
 spec:
   params:
-    - name: message
-  tasks:
-    - name: hello
-      taskRef:
-        name: echo
-      params:
-        - name: message
-          value: "$(params.message)"
+    - name: repo-url
+      description: The URL of the git repo to clone
+      type: string
+    - name: branch
+      description: The branch to clone
+      type: string
+  steps:
+    - name: checkout
+      image: bitnami/git:latest
+      command: [git]
+      args: ["clone", "--branch", "$(params.branch)", "$(params.repo-url)"]
